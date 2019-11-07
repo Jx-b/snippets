@@ -3,4 +3,9 @@
  
 ## Volcano plot
 
+Requirements:
+* numpy
+* pandas
+* plotly
+
 ![volcano plot](volcano_plot/volcano.gif)

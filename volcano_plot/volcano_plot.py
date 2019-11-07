@@ -28,17 +28,31 @@ if __name__ == '__main__':
 
     #assign colour based on significance
     color = df.apply(lambda x: is_significant(x["logFC"],x['adj.P.Val']), axis= 1)
+    
+    #if you want to highlight some gene of interest list them here
+    gene_of_interest = ["Egf", "Ctgf", "Rbp1", "Eef2k"]
+    color_highlight='black'
 
     #draw plot
-    data=go.Scatter(
+    data= [go.Scatter(
         x= df['logFC'],
         y= -1*np.log10(df['adj.P.Val']),
         text= df['SYMBOL'],
         hoverinfo='text',
+        textposition='top center',
         mode='markers',
         marker=dict(
             color=color)
-    )
+        ),
+        go.Scatter(
+        x= df.loc[df['SYMBOL'].isin(gene_of_interest),'logFC'],
+        y= -1*np.log10(df.loc[df['SYMBOL'].isin(gene_of_interest),'adj.P.Val']),
+        text= df.loc[df['SYMBOL'].isin(gene_of_interest),'SYMBOL'],
+        textposition='top center',
+        mode='markers+text',
+        marker=dict(
+            color=color_highlight)
+        )]
 
     shapes=[
             # Line Horizontal
@@ -84,12 +98,13 @@ if __name__ == '__main__':
             )]
 
     layout= go.Layout(title="Volcano plot",
-                      xaxis = dict(title= "Log2(fold change)",
+                      xaxis = dict(title= '$\mathrm{log_{2}(fold \: change)}$',
                                 range= [-1*max(abs(df['logFC'])), max(abs(df['logFC']))]),
-                      yaxis = dict(title= "-Log10(adj. p-value)"),
+                      yaxis = dict(title= '$\mathrm{-log_{10}(adj. \: pval)}$'),
                       shapes = shapes,
-                      paper_bgcolor='rgba(0,0,0,0)',
-                      plot_bgcolor='rgba(0,0,0,0)'
+                      showlegend= False,
+                      paper_bgcolor= 'rgba(0,0,0,0)',
+                      plot_bgcolor= 'rgba(0,0,0,0)'
                      )
 
     fig = go.Figure(data=data, layout= layout)
